@@ -116,8 +116,12 @@ func (c *Client) Search(ctx context.Context, q string, from string, w io.Writer)
 	if resp.StatusCode != http.StatusOK {
 		return errors.New(resp.Status)
 	}
-
+	//adjust the capacity to your need (max characters in line)
+	const maxCapacity = 1024*1024
+	buf := make([]byte, maxCapacity)
 	scanner := bufio.NewScanner(resp.Body)
+	scanner.Buffer(buf,maxCapacity)
+
 	for scanner.Scan() {
 		select {
 		case <-ctx.Done():
