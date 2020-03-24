@@ -90,10 +90,11 @@ func (c *Client) Login(ctx context.Context) error {
 }
 
 // Search streams search results to io.Writer as they become available.
-func (c *Client) Search(ctx context.Context, q string, from string, w io.Writer) error {
+func (c *Client) Search(ctx context.Context, q string, from string, to string, w io.Writer) error {
 	data := make(url.Values)
 	data.Add("search", fmt.Sprintf("search %s", q))
 	data.Add("earliest_time", from)
+	data.Add("latest_time", to)
 	data.Add("output_mode", "json")
 
 	req, err := http.NewRequest(http.MethodPost, c.searchUrl, bytes.NewBufferString(data.Encode()))
@@ -117,7 +118,7 @@ func (c *Client) Search(ctx context.Context, q string, from string, w io.Writer)
 		return errors.New(resp.Status)
 	}
 	//adjust the capacity to your need (max characters in line)
-	const maxCapacity = 1024*1024
+	const maxCapacity = 128*1024
 	buf := make([]byte, maxCapacity)
 	scanner := bufio.NewScanner(resp.Body)
 	scanner.Buffer(buf,maxCapacity)
