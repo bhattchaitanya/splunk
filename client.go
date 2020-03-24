@@ -130,6 +130,9 @@ func (c *Client) Search(ctx context.Context, q string, from string, to string, w
 
 		default:
 			if _, err := w.Write(scanner.Bytes()); err != nil {
+				if err != nil {
+					fmt.Println(err)
+				}
 				return err
 			}
 		}
